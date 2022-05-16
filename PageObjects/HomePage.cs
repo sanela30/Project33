@@ -32,5 +32,17 @@ namespace Project33.PageObjects
                 register.Click();
             }
         }
+
+        public void CkickOnLoginButton()
+        {
+            IWebElement logIn = driver1.FindElement(By.XPath("/html/body/div[@class='container']/div[@class='row'][3]/div[@class='col-sm-6 text-center'][1]/a"));
+            if (logIn.Displayed && logIn.Enabled)
+            {
+                logIn.Click();
+
+            }
+        }
+
+
     }
 }
