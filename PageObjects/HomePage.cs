@@ -42,7 +42,15 @@ namespace Project33.PageObjects
 
             }
         }
+        public void LinkLogout()
+        {
+            IWebElement logOut = driver1.FindElement(By.XPath("/html/body/div[@class='navbar navbar-default']/div[@class='container']/ul[@class='nav navbar-nav navbar-right']/li[3]/a"));
+            if (logOut.Displayed && logOut.Enabled)
+            {
+                logOut.Click();
 
+            }
+}
 
     }
 }

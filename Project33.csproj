@@ -64,7 +64,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="libraries\CSVHandlers.cs" />
+    <Compile Include="CSVHandlers.cs" />
+    <Compile Include="libraries\CSVHandler.cs" />
     <Compile Include="PageObjects\HomePage.cs" />
     <Compile Include="PageObjects\LoginPage.cs" />
     <Compile Include="PageObjects\RegisterPage.cs" />

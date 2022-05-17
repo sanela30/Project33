@@ -52,24 +52,53 @@ namespace Project33
         [Category("LogIn")]
         public void TestLogin()
         {
-            CSVHandlers CSV = new CSVHandlers();
-            Excel.Worksheet Sheet = CSV.OpetCSV(@"D:\SACUVANO\RajakKurs\32.cas\vezba32CSV");
+            CSVHandler CSV = new CSVHandler();
+            Excel.Worksheet Sheet = CSV.OpenCSV(@"D:\SACUVANO\RajakKurs\32.cas\vezba32CSV\vezba.csv");
 
-            ShopLoginPage logIn = new ShopLoginPage(driver);
-            QaHomePage naslovna = new QaHomePage(driver);
-            naslovna.GoToPage();
-            naslovna.CkickOnLoginButton();
-            logIn.UserName.SendKeys("MilosMiki");
-            logIn.Password.SendKeys("Milos1234569");
-            logIn.LogInButton.Click();
-            if(logIn.WelcomeMessage != null)
+            int rows = Sheet.UsedRange.Rows.Count;
+            int columns=Sheet.UsedRange.Columns.Count;
+
+            TestContext.WriteLine("Rows:{0},Columns:{1}",rows,columns);
+
+            string username;
+            string password;
+
+            int pass = 0;
+            int fail = 0;
+
+            for (int i=2; i<=rows; i++)
             {
-                Assert.Pass("Login is successful");
+                username = Sheet.Cells[i, 1].Value;
+                password= Sheet.Cells[i, 2].Value;
+                TestContext.WriteLine("Username:{0} Password:{1}", username, password);
+                if (driver == null)
+                {
+                    SetUp();
+                }
+
+                ShopLoginPage logIn = new ShopLoginPage(driver);
+                QaHomePage naslovna = new QaHomePage(driver);
+                naslovna.GoToPage();
+                naslovna.CkickOnLoginButton();
+                logIn.UserName.SendKeys(username);
+                logIn.Password.SendKeys(password);
+                logIn.LogInButton.Click();
+                System.Threading.Thread.Sleep(4000);
+                if (logIn.WelcomeMessage != null)
+                {
+                    pass++;
+                    naslovna.LinkLogout();
+                }
+                else
+                {
+                    fail++;
+                }
+
+                
+                
             }
-            else
-            {
-                Assert.Fail();
-            }
+
+            TestContext.WriteLine("Pass:{0} Fail:{1}", pass, fail);
 
 
         }
@@ -78,7 +107,11 @@ namespace Project33
         [TearDown]
         public void TearDown()
         {
-            driver.Close();
+            if(driver != null)
+            {
+                driver.Close();
+            }
+            
         }
     }
 }
