@@ -53,7 +53,7 @@ namespace Project33
         public void TestLogin()
         {
             CSVHandler CSV = new CSVHandler();
-            Excel.Worksheet Sheet = CSV.OpenCSV(@"D:\SACUVANO\RajakKurs\32.cas\vezba32CSV\vezba.csv");
+            Excel.Worksheet Sheet = CSV.OpenCSV(@"D:\SACUVANO\RajakKurs\32.cas\vezba32CSV\new1.csv");
 
             int rows = Sheet.UsedRange.Rows.Count;
             int columns=Sheet.UsedRange.Columns.Count;
@@ -62,6 +62,7 @@ namespace Project33
 
             string username;
             string password;
+            string description;
 
             int pass = 0;
             int fail = 0;
@@ -70,7 +71,8 @@ namespace Project33
             {
                 username = Sheet.Cells[i, 1].Value;
                 password= Sheet.Cells[i, 2].Value;
-                TestContext.WriteLine("Username:{0} Password:{1}", username, password);
+                description= Sheet.Cells[i, 3].Value;
+                TestContext.WriteLine("Username: {0} Password: {1} Description: {2}", username, password,description);
                 if (driver == null)
                 {
                     SetUp();
@@ -99,6 +101,7 @@ namespace Project33
             }
 
             TestContext.WriteLine("Pass:{0} Fail:{1}", pass, fail);
+            CSV.Close();
 
 
         }
