@@ -60,19 +60,26 @@ namespace Project33
 
             TestContext.WriteLine("Rows:{0},Columns:{1}",rows,columns);
 
+            string name;
             string username;
             string password;
             string description;
+            string expected;
 
             int pass = 0;
             int fail = 0;
+            bool hasFailedExpected = false;
 
             for (int i=2; i<=rows; i++)
             {
-                username = Sheet.Cells[i, 1].Value;
-                password= Sheet.Cells[i, 2].Value;
-                description= Sheet.Cells[i, 3].Value;
-                TestContext.WriteLine("Username: {0} Password: {1} Description: {2}", username, password,description);
+                name =Sheet.Cells[i, 1].Value;
+                username = Sheet.Cells[i, 2].Value;
+                password= Sheet.Cells[i, 3].Value;
+                expected = Sheet.Cells[i, 4].Value;
+                description = Sheet.Cells[i, 5].Value;
+                
+                TestContext.WriteLine("{0}",name);
+
                 if (driver == null)
                 {
                     SetUp();
@@ -86,20 +93,40 @@ namespace Project33
                 logIn.Password.SendKeys(password);
                 logIn.LogInButton.Click();
                 System.Threading.Thread.Sleep(4000);
-                if (logIn.WelcomeMessage != null)
+                if (logIn.WelcomeMessage != null)//Succesful login
                 {
-                    pass++;
-                    naslovna.LinkLogout();
-                }
-                else
+                    if (expected == "pass")
+                    {
+                        TestContext.Write("PASS");
+                        naslovna.LinkLogout();
+                    }
+                    else
+                    {
+                        TestContext.Write("FAIL");
+                        hasFailedExpected = true;
+                    }
+                    
+                }else //Unsucceful login
                 {
-                    fail++;
+                    if (expected == "fail")
+                    {
+                        TestContext.Write("PASS");
+                    }
+                    else
+                    {
+                        TestContext.Write("FAIL");
+                        hasFailedExpected = true;
+                    }
                 }
-
-                
-                
+                TestContext.WriteLine("({0})", description);
             }
-
+            if (hasFailedExpected)
+            {
+                Assert.Fail("Some tests have unmet expected results");
+            }else
+            {
+                Assert.Pass();
+            }
             TestContext.WriteLine("Pass:{0} Fail:{1}", pass, fail);
             CSV.Close();
 
