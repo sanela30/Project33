@@ -8,6 +8,7 @@ using EC = SeleniumExtras.WaitHelpers.ExpectedConditions;
 using QaHomePage = Project33.PageObjects.HomePage;
 using QaRegisterPage=Project33.PageObjects.RegisterPage;
 using ShopLoginPage = Project33.PageObjects.LoginPage;
+using ShopOrderPage = Project33.PageObjects.OrderPage;
 using Excel = Microsoft.Office.Interop.Excel;
 using Project33.libraries;
 
@@ -59,6 +60,7 @@ namespace Project33
             int columns=Sheet.UsedRange.Columns.Count;
 
             TestContext.WriteLine("Rows:{0},Columns:{1}",rows,columns);
+            FileManagement.WriteLine("Rows" + rows.ToString() + " Columns:" + columns.ToString());
 
             string name;
             string username;
@@ -79,6 +81,7 @@ namespace Project33
                 description = Sheet.Cells[i, 5].Value;
                 
                 TestContext.WriteLine("{0}",name);
+                FileManagement.Write(name);
 
                 if (driver == null)
                 {
@@ -98,11 +101,13 @@ namespace Project33
                     if (expected == "pass")
                     {
                         TestContext.Write("PASS");
+                        FileManagement.Write("PASS");
                         naslovna.LinkLogout();
                     }
                     else
                     {
                         TestContext.Write("FAIL");
+                        FileManagement.Write("FAIL");
                         hasFailedExpected = true;
                     }
                     
@@ -111,14 +116,17 @@ namespace Project33
                     if (expected == "fail")
                     {
                         TestContext.Write("PASS");
+                        FileManagement.Write("PASS");
                     }
                     else
                     {
                         TestContext.Write("FAIL");
+                        FileManagement.Write("FAIL");
                         hasFailedExpected = true;
                     }
                 }
                 TestContext.WriteLine("({0})", description);
+                FileManagement.WriteLine(" " + description);
             }
             if (hasFailedExpected)
             {
@@ -132,7 +140,25 @@ namespace Project33
 
 
         }
+        [Test]
+        [Category("Order")]
+        public void OrderPageTest()
+        {
+            QaHomePage naslovna = new QaHomePage(driver);
+            naslovna.GoToPage();
+            naslovna.CkickOnLoginButton();
+            ShopLoginPage logIn = new ShopLoginPage(driver);
+            logIn.UserName.SendKeys("MilosMiki");
+            logIn.Password.SendKeys("Milos1234569");
+            logIn.LogInButton.Click();
+            // System.Threading.Thread.Sleep(4000);
+            ShopOrderPage orderMenu = new ShopOrderPage(driver);
+            orderMenu.OrderMenu();
 
+
+
+
+        }
 
         [TearDown]
         public void TearDown()

@@ -66,8 +66,10 @@
   <ItemGroup>
     <Compile Include="CSVHandlers.cs" />
     <Compile Include="libraries\CSVHandler.cs" />
+    <Compile Include="libraries\FileManagement.cs" />
     <Compile Include="PageObjects\HomePage.cs" />
     <Compile Include="PageObjects\LoginPage.cs" />
+    <Compile Include="PageObjects\OrderPage.cs" />
     <Compile Include="PageObjects\RegisterPage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
