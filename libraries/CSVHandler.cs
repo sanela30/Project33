@@ -18,7 +18,7 @@ namespace Project33.libraries
                 this.App = new Excel.Application();
             }
 
-            public Excel.Worksheet OpenCSV(string CSVFile, string CSVDelimiter = ",")
+            public Excel.Worksheet OpenCSV(string CSVFile, string CSVDelimiter = ";")
             {
                 if (this.App == null)
                 {

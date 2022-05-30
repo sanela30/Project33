@@ -9,6 +9,7 @@ using QaHomePage = Project33.PageObjects.HomePage;
 using QaRegisterPage=Project33.PageObjects.RegisterPage;
 using ShopLoginPage = Project33.PageObjects.LoginPage;
 using ShopOrderPage = Project33.PageObjects.OrderPage;
+using ShopOrderItems = Project33.PageObjects.ListOfOrderedItems;
 using Excel = Microsoft.Office.Interop.Excel;
 using Project33.libraries;
 
@@ -140,6 +141,7 @@ namespace Project33
 
 
         }
+
         [Test]
         [Category("Order")]
         public void OrderPageTest()
@@ -151,14 +153,96 @@ namespace Project33
             logIn.UserName.SendKeys("MilosMiki");
             logIn.Password.SendKeys("Milos1234569");
             logIn.LogInButton.Click();
-            // System.Threading.Thread.Sleep(4000);
             ShopOrderPage orderMenu = new ShopOrderPage(driver);
-            orderMenu.OrderMenu();
+            ShopOrderItems orderItems = new ShopOrderItems(driver);
+            // System.Threading.Thread.Sleep(4000);
+            
+            if (logIn.WelcomeMessage != null)//Succesful login
+            {
+                orderMenu.Quantity.Click();
+                System.Threading.Thread.Sleep(4000);
+                /*orderMenu.QantitySelectValue();
+                System.Threading.Thread.Sleep(4000);
+                orderMenu.OrderButton.Click();*/
+                
+                CSVHandler CSVOrder = new CSVHandler();
+                Excel.Worksheet Sheet = CSVOrder.OpenCSV(@"D:\SACUVANO\RajakKurs\32.cas\vezba32CSV\order1.csv");
+
+                int rows = Sheet.UsedRange.Rows.Count;
+                int columns = Sheet.UsedRange.Columns.Count;
+                
+                TestContext.WriteLine("Rows:{0},Columns:{1}", rows, columns);
+                OrderFileMenagment.WriteLine("Rows" + rows.ToString() + " Columns:" + columns.ToString());
+                string name;
+                string value;
+                string shiping;
+                string expected;
+                string description;
+                bool hasFailedExpected1 = false;
+                int pass = 0;
+                int fail = 0;
+
+                for (int i = 2; i <= rows; i++)
+                {
+                    name = Convert.ToString(Sheet.Cells[i, 1].Value);
+                    value = Convert.ToString(Sheet.Cells[i, 2].Value);
+                    shiping = Convert.ToString(Sheet.Cells[i, 3].Value);
+                    expected = Convert.ToString(Sheet.Cells[i, 4].Value);
+                    description = Sheet.Cells[i, 5].Value;
+
+                    TestContext.WriteLine("Name{0} value:{1} {2} {3}", name, value, shiping, description);
+                    OrderFileMenagment.Write(name);
 
 
+                    if (orderMenu.Order != null)
+                    {
+                        orderMenu.Quantity.Click();
+                        //System.Threading.Thread.Sleep(4000);
+
+                        orderMenu.Quantity.SendKeys(value);
+                        orderMenu.OrderButton.Click();
+                        System.Threading.Thread.Sleep(4000);
+                        
+                        if (shiping != "FREE")
+                          {
+                             shiping = $"${shiping}";
+                             
+                          }
+                        else
+                        {
+                            TestContext.Write("FAIL");
+                            OrderFileMenagment.Write("FAIL");
+                            hasFailedExpected1 = true;
+
+                        }
+                        TestContext.WriteLine("({0})", description);
+                        OrderFileMenagment.WriteLine(" " + description);
+                    }
+                    if (hasFailedExpected1)
+                    {
+                        Assert.Fail("Some tests have unmet expected results");
+                    }
+                    else
+                    {
+                        Assert.Pass();
+                    }
+                    TestContext.WriteLine("Pass:{0} Fail:{1}", pass, fail);
+                        CSVOrder.Close();
+
+
+                }
+            }
+             
 
 
         }
+
+          
+
+           
+            
+
+            
 
         [TearDown]
         public void TearDown()
